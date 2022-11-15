@@ -49,15 +49,13 @@ self.addEventListener('fetch', async function (event) {
 
   event.respondWith(caches.open(CACHE_NAME).then((cache) => {
 
-    try {
-      return fetch(event.request).then((response) => {
-        cache.put(event.request, response.clone());
-        return response;
-      });
-    }
-    catch(error) {
-      return cache.match(event.request);
-    }
+    return fetch(event.request).then((response) => {
+      cache.put(event.request, response.clone());
+      return response;
+    }).catch(() => {
+      return cache.match(event.request.url);
+    });
+    
   }));
 
 });
